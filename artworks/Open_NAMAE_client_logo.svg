@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="600"
+   height="240"
+   viewBox="0 0 158.75 63.500002"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="Open_NAMAE_client_logo.svg"
+   inkscape:export-filename="Open_NAMAE_client_logo.webp"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="331.63308"
+     inkscape:cy="136.47161"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect5"
+       style="fill:#33bbdd;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+       d="m 18.520834,13.229167 v 47.625 h 47.625 v -47.625 z M 23.8125,15.875 c 1.461254,0 2.645834,1.18458 2.645834,2.645833 1e-6,1.461254 -1.18458,2.645835 -2.645834,2.645834 -1.461253,0 -2.645833,-1.18458 -2.645833,-2.645834 0,-1.461253 1.18458,-2.645833 2.645833,-2.645833 z"
+       sodipodi:nodetypes="cccccsssss" />
+    <g
+       id="g5"
+       style="stroke:#ffffff;stroke-width:1.05833;stroke-opacity:1"
+       transform="translate(26.458332,21.166665)">
+      <ellipse
+         style="fill:#44bbdd;fill-opacity:1;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+         id="path1"
+         cx="15.875001"
+         cy="15.875"
+         rx="15.875001"
+         ry="15.875" />
+      <ellipse
+         style="fill:#44bbdd;fill-opacity:1;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+         id="path2"
+         cx="15.875001"
+         cy="15.875001"
+         rx="7.9375005"
+         ry="15.875001" />
+      <path
+         style="fill:#333333;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;paint-order:markers stroke fill"
+         d="M 15.875001,0 V 31.750001"
+         id="path3" />
+      <path
+         style="fill:#333333;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+         d="M 0,15.875 H 31.750003"
+         id="path4" />
+      <path
+         style="fill:#333333;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+         d="m 2.38125,7.9375001 h 26.9875"
+         id="path5"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:#333333;stroke:#ffffff;stroke-width:1.32292;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+         d="m 2.38125,23.8125 h 26.9875"
+         id="path5-3"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <path
+       id="path8"
+       style="fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:normal"
+       d="M 17.4625,1.5875 C 11.617486,1.5865671 6.8791668,6.3258196 6.8791668,12.170833 c -6e-7,5.845014 4.7383192,10.585112 10.5833332,10.583334 3.029853,-9.22e-4 5.913246,-1.30387 7.919931,-3.573942 0.0931,-0.207714 0.148735,-0.431771 0.149861,-0.659392 0.0047,-0.949803 -0.769987,-1.724113 -1.719792,-1.719791 -0.248933,0.0011 -0.4936,0.06487 -0.717268,0.174149 -1.406069,1.650425 -3.464568,2.603311 -5.632732,2.603976 -4.09151,0.0013 -7.408334,-3.316824 -7.408333,-7.408334 0,-4.0915093 3.316827,-7.4133808 7.408333,-7.408333 3.981363,0.00491 7.2429,3.1649226 7.385079,7.14375 h 3.191537 C 27.895601,6.1674264 23.203117,1.5884163 17.4625,1.5875 Z"
+       sodipodi:nodetypes="ssscsscsssccs" />
+    <text
+       xml:space="preserve"
+       style="font-weight:300;font-size:13.2292px;line-height:1.25;font-family:'キカカナ23';-inkscape-font-specification:'キカカナ23 Light';fill:#666666;fill-opacity:1;stroke-width:0.264583"
+       x="70.776039"
+       y="36.380234"
+       id="text9"><tspan
+         sodipodi:role="line"
+         id="tspan9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.2292px;font-family:'キカカナ23R';-inkscape-font-specification:'キカカナ23R';fill:#666666;fill-opacity:1;stroke-width:0.264583"
+         x="70.776039"
+         y="36.380234">Open</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.2292px;font-family:'キカカナ23R';-inkscape-font-specification:'キカカナ23R';fill:#666666;fill-opacity:1;stroke-width:0.264583"
+         x="70.776039"
+         y="52.916737"
+         id="tspan11"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:13.2292px;font-family:'キカカナ23R';-inkscape-font-specification:'キカカナ23R Medium';fill:#333333;fill-opacity:1"
+   id="tspan13">NAMAE</tspan> client</tspan></text>
+  </g>
+  <metadata
+     id="metadata824">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
