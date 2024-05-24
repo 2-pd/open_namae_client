@@ -1,0 +1,43 @@
+--------------------------------------------------------------------------------
+
+  Open NAMAE client 設計案
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ 基本方針 _/_/_/_/
+
+・「お名前.com DDNSクライアント」のオープンソース実装
+・システム要件 : Python 3(標準ライブラリのみで動作)、GNU/LinuxとWindowsの双方に対応
+・GUIの設定画面とcronで実行できるCUIツールを持つ
+
+
+_/_/_/_/ ディレクトリ構造 _/_/_/_/
+
+/
+└ open_namae.py ・・・CUIとGUIで共有する関数
+└ cui_client.py ・・・CUIツール本体
+└ open_namae_gui.py ・・・GUI本体
+└ open_namae_gui.bat ・・・GUI起動用バッチファイル
+└ config.json ・・・各種設定(open_namae_gui.pyにより自動生成される)
+└ files/
+   └ icon.ico ・・・Windowsで使用するGUI用アイコン
+   └ icon.png ・・・GNU/Linuxで使用するGUI用アイコン
+
+
+_/_/_/_/ 各設定ファイル _/_/_/_/
+
+■■■ config.json ■■■
+
+{
+    "onamae_id" : お名前ID,
+    "password" : お名前IDに対応するパスワード,
+    "ip_address_api" : グローバルIPを取得するURL,
+    "dns_host" : お名前.comのDDNS更新用ホスト名,
+    "dns_port" : お名前.comのDDNS更新用ポート番号(整数値),
+    "domains" : [ ドメインの一覧
+        {
+            "host_name : ホスト名,
+            "domain_name" : ドメイン名
+        }...
+    ]
+}
