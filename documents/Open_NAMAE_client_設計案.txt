@@ -19,6 +19,7 @@ _/_/_/_/ ディレクトリ構造 _/_/_/_/
 └ open_namae_gui.py ・・・GUI本体
 └ open_namae_gui.bat ・・・GUI起動用バッチファイル
 └ config.json ・・・各種設定(open_namae_gui.pyにより自動生成される)
+└ last_execution_log.json ・・・JSON形式の最終実行ログファイル
 └ files/
    └ icon.ico ・・・Windowsで使用するGUI用アイコン
    └ icon.png ・・・GNU/Linuxで使用するGUI用アイコン
@@ -36,8 +37,16 @@ _/_/_/_/ 各設定ファイル _/_/_/_/
     "dns_port" : お名前.comのDDNS更新用ポート番号(整数値),
     "domains" : [ ドメインの一覧
         {
-            "host_name : ホスト名,
+            "host_name" : ホスト名,
             "domain_name" : ドメイン名
         }...
     ]
+}
+
+■■■ last_execution_log.json ■■■
+
+{
+    "execution_succeeded" : 最終実行の結果が成功がどうか(BOOL値),
+    "execution_datetime" : 「YYYY-MM-DD hh:mm:ss」形式の最終実行時刻,
+    "log_text" : ログテキスト
 }
