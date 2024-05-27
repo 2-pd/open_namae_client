@@ -2,16 +2,6 @@
 # coding: utf-8
 
 
-#
-# LICENSE
-#
-#  このソフトウェアは、無権利創作宣言に基づき著作権放棄されています。
-#  営利・非営利を問わず、自由にご利用いただくことが可能です。
-#
-#   https://www.2pd.jp/license/
-#
-
-
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
@@ -19,9 +9,7 @@ import os
 import platform
 import json
 
-
-APP_NAME = "Open NAMAE client"
-APP_VERSION = "24.05-1"
+import open_namae
 
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
@@ -69,7 +57,7 @@ def open_main_window ():
     
     main_win = tk.Tk()
     
-    main_win.title(APP_NAME + " コントロールパネル v" + APP_VERSION)
+    main_win.title(open_namae.APP_NAME + " コントロールパネル v" + open_namae.APP_VERSION)
     main_win.geometry("480x480")
     main_win.resizable(0, 0)
     main_win.configure(bg="#ffffff")
@@ -137,7 +125,7 @@ def open_main_window ():
         else:
             domains_area.insert(tk.END, domain_data["domain_name"] + "\n")
     
-    dns_update_button = tk.Button(main_win, text="この設定でDNS情報を更新", font=entry_font, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    dns_update_button = tk.Button(main_win, text="この設定でDNS情報を更新", font=entry_font, command=dns_update, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
     dns_update_button.place(x=70, y=420, width=200, height=40)
     
     save_button = tk.Button(main_win, text="変更を適用", font=entry_font, command=save_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
@@ -150,7 +138,7 @@ def close_main_window ():
     global config
     global main_win
     
-    if messagebox.askokcancel(APP_NAME , APP_NAME + "の設定を終了しますか？"):
+    if messagebox.askokcancel(open_namae.APP_NAME , open_namae.APP_NAME + "の設定を終了しますか？"):
         main_win.destroy()
 
 
@@ -190,6 +178,24 @@ def update_config ():
             })
 
 
+def dns_update ():
+    global config
+    
+    update_config()
+    
+    ddns_client = open_namae.ddns_client()
+    
+    if ddns_client.get_global_ip_address(config["ip_address_api"]):
+        if not ddns_client.update_dns_records(config["dns_host"], config["dns_port"], config["onamae_id"], config["password"], config["domains"]):
+            messagebox.showerror(open_namae.APP_NAME ,"DNS情報の更新に失敗しました")
+    else:
+        messagebox.showerror(open_namae.APP_NAME ,"グローバルIPアドレスの取得に失敗しました")
+    
+    ddns_client.save_log()
+    
+    messagebox.showinfo(open_namae.APP_NAME ,"DNS情報を更新が終了しました")
+
+
 def save_config ():
     global config
     
@@ -198,7 +204,7 @@ def save_config ():
     with open("config.json", "w", encoding="utf-8") as json_fp:
         json.dump(config, json_fp, ensure_ascii=False, indent=4)
     
-    messagebox.showinfo(APP_NAME ,"設定を保存しました")
+    messagebox.showinfo(open_namae.APP_NAME ,"設定を保存しました")
 
 
 open_main_window()
