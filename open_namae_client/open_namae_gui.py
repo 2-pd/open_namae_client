@@ -48,6 +48,7 @@ def open_main_window ():
     global config
     global is_windows
     global main_win
+    global label_execution_status
     global entry_onamae_id
     global entry_password
     global entry_ip_address_api
@@ -64,16 +65,33 @@ def open_main_window ():
     
     main_win.protocol("WM_DELETE_WINDOW", close_main_window)
     
+    main_menu = tk.Menu(main_win, bg="#eeeeee", activebackground="#ffffff", relief="flat")
+    main_win.configure(menu=main_menu)
+    
     if is_windows:
         main_win.iconbitmap("files/icon.ico")
         
+        main_menu_file = tk.Menu(main_menu, tearoff=False)
+        
+        status_font = tk.font.Font(family="Yu Gothic", size=12)
         label_font = tk.font.Font(family="Yu Gothic", size=11)
         entry_font = tk.font.Font(family="Yu Gothic", size=10)
     else:
         main_win.iconphoto(True, tk.PhotoImage(file="files/icon.png"))
         
+        main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", bd=10, relief="flat")
+        
+        status_font = tk.font.Font(size=11)
         label_font = tk.font.Font(size=10)
         entry_font = tk.font.Font(size=9)
+    
+    main_menu.add_cascade(label="ファイル", menu=main_menu_file)
+    main_menu_file.add_command(label="変更を適用", command=save_config, font=("",10))
+    main_menu_file.insert_separator(1)
+    main_menu_file.add_command(label="終了", command=close_main_window, font=("",10))
+    
+    label_execution_status = tk.Label(main_win, font=status_font, fg="#33bbdd", bg="#ffffff")
+    label_execution_status.place(x=0, y=10, width=480, height=40)
     
     label_onamae_id = tk.Label(main_win, text="お名前ID:", font=label_font, fg="#333333", bg="#ffffff")
     label_onamae_id.place(x=10, y=60)
@@ -131,6 +149,8 @@ def open_main_window ():
     save_button = tk.Button(main_win, text="変更を適用", font=entry_font, command=save_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
     save_button.place(x=290, y=420, width=120, height=40)
     
+    repeat_check_log()
+    
     main_win.mainloop()
 
 
@@ -140,6 +160,56 @@ def close_main_window ():
     
     if messagebox.askokcancel(open_namae.APP_NAME , open_namae.APP_NAME + "の設定を終了しますか？"):
         main_win.destroy()
+
+
+last_execution_log_mtime = None
+
+def check_log ():
+    global last_execution_log_mtime
+    global label_execution_status
+    
+    log_file_name = "last_execution_log.json"
+    
+    error_occurred = False
+    
+    if os.path.isfile(log_file_name):
+        log_file_mtime = os.path.getmtime(log_file_name)
+        
+        if last_execution_log_mtime == None or log_file_mtime > last_execution_log_mtime:
+            last_execution_log_mtime = log_file_mtime
+            
+            try:
+                with open(log_file_name, "r", encoding="utf-8") as log_fp:
+                    log_data = json.load(log_fp)
+                
+                if log_data["execution_succeeded"]:
+                    label_text = "DNS情報は " + log_data["execution_datetime"] + " に更新されました"
+                else:
+                    error_occurred = True
+                    label_text = log_data["execution_datetime"] + " にDNS情報の更新でエラーが発生しました"
+            except:
+                error_occurred = True
+                label_text = "ログファイルが読み込めません"
+        else:
+            return
+    else:
+        error_occurred = True
+        label_text = "DNS情報更新処理の実行履歴がありません"
+    
+    if error_occurred:
+        label_execution_status["fg"] = "#ee3333"
+        label_execution_status["text"] = "【!】" + label_text
+    else:
+        label_execution_status["fg"] = "#33bbdd"
+        label_execution_status["text"] = label_text
+
+
+def repeat_check_log ():
+    global main_win
+    
+    check_log()
+    
+    main_win.after(60000, repeat_check_log)
 
 
 def update_config ():
@@ -193,7 +263,9 @@ def dns_update ():
     
     ddns_client.save_log()
     
-    messagebox.showinfo(open_namae.APP_NAME ,"DNS情報を更新が終了しました")
+    check_log()
+    
+    messagebox.showinfo(open_namae.APP_NAME ,"DNS情報の更新が終了しました")
 
 
 def save_config ():
