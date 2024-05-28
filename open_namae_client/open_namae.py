@@ -24,7 +24,9 @@ APP_VERSION = "24.05-1"
 
 
 class ddns_client:
-    def __init__ (self):
+    def __init__ (self, silent_mode=True):
+        self.silent = silent_mode
+        
         self.execution_datetime = str(datetime.datetime.today())[0:19]
         self.log_text = APP_NAME + " v" + APP_VERSION + "\n\n"
         self.global_ip_address = None
@@ -33,7 +35,12 @@ class ddns_client:
     
     def add_log (self, log, is_error=False):
         if is_error:
-            self.log_text += "【ERROR】 "
+            self.execution_succeeded = False
+            
+            log = "【ERROR】 " + log
+            
+            if not self.silent:
+                print(log)
         
         self.log_text += log
     
@@ -53,6 +60,9 @@ class ddns_client:
         except:
             return False
         
+        if os.stat(log_file_path).st_uid == os.geteuid():
+            os.chmod(log_file_path, 0o766)
+        
         return True
     
     
@@ -66,8 +76,6 @@ class ddns_client:
             self.add_log("IP: " + self.global_ip_address + "\n")
         except:
             self.add_log(traceback.format_exc(), True)
-            
-            self.execution_succeeded = False
             
             return False
         
@@ -83,8 +91,6 @@ class ddns_client:
             return True
         else:
             self.add_log(recv_str, True)
-            
-            self.execution_succeeded = False
             
             return False
     
@@ -142,8 +148,6 @@ class ddns_client:
                         return False
         except:
             self.add_log(traceback.format_exc(), True)
-            
-            self.execution_succeeded = False
             
             return False
         
