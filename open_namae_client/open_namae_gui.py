@@ -71,21 +71,22 @@ def open_main_window ():
     
     main_win.protocol("WM_DELETE_WINDOW", close_main_window)
     
-    main_menu = tk.Menu(main_win, bg="#eeeeee", activebackground="#ffffff", relief="flat")
-    main_win.configure(menu=main_menu)
-    
     if is_windows:
         main_win.iconbitmap("files/icon.ico")
         
-        main_menu_file = tk.Menu(main_menu, tearoff=False, activebackground="#ffffff")
-        main_menu_execution = tk.Menu(main_menu, tearoff=False, activebackground="#ffffff")
-        main_menu_help = tk.Menu(main_menu, tearoff=False, activebackground="#ffffff")
+        main_menu = tk.Menu(main_win)
         
-        status_font = tk.font.Font(family="Yu Gothic", size=12)
-        label_font = tk.font.Font(family="Yu Gothic", size=11)
-        entry_font = tk.font.Font(family="Yu Gothic", size=10)
+        main_menu_file = tk.Menu(main_menu, tearoff=False)
+        main_menu_execution = tk.Menu(main_menu, tearoff=False)
+        main_menu_help = tk.Menu(main_menu, tearoff=False)
+        
+        status_font = tk.font.Font(family="Yu Gothic", size=11)
+        label_font = tk.font.Font(family="Yu Gothic", size=10)
+        entry_font = tk.font.Font(family="Yu Gothic", size=9)
     else:
         main_win.iconphoto(True, tk.PhotoImage(file="files/icon.png"))
+        
+        main_menu = tk.Menu(main_win, bg="#eeeeee", activebackground="#ffffff", relief="flat")
         
         main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
         main_menu_execution = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
@@ -94,6 +95,8 @@ def open_main_window ():
         status_font = tk.font.Font(size=11)
         label_font = tk.font.Font(size=10)
         entry_font = tk.font.Font(size=9)
+    
+    main_win.configure(menu=main_menu)
     
     main_menu.add_cascade(label="ファイル", menu=main_menu_file)
     main_menu_file.add_command(label="変更を適用", command=save_config, font=("",10))
@@ -153,8 +156,8 @@ def open_main_window ():
     domains_area_scroll_y = tk.Scrollbar(main_win, orient="vertical", bg="#eeeeee", activebackground="#ffffff")
     domains_area = tk.Text(main_win, font=entry_font, fg="#333333", bg="#ffffff", padx=5, pady=5, relief="solid", yscrollcommand=domains_area_scroll_y.set)
     domains_area_scroll_y["command"] = domains_area.yview
-    domains_area.place(x=15, y=220, width=435, height=180)
-    domains_area_scroll_y.place(x=450, y=220, width=15, height=180)
+    domains_area.place(x=15, y=220, width=435, height=160)
+    domains_area_scroll_y.place(x=450, y=220, width=15, height=160)
     
     for domain_data in config["domains"]:
         if "host_name" in domain_data:
@@ -162,11 +165,11 @@ def open_main_window ():
         else:
             domains_area.insert(tk.END, domain_data["domain_name"] + "\n")
     
-    dns_update_button = tk.Button(main_win, text="この設定でDNS情報を更新", font=entry_font, command=dns_update, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
-    dns_update_button.place(x=70, y=420, width=200, height=40)
+    dns_update_button = tk.Button(main_win, text="この設定でDNS情報を更新", font=label_font, command=dns_update, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    dns_update_button.place(x=70, y=400, width=200, height=40)
     
-    save_button = tk.Button(main_win, text="変更を適用", font=entry_font, command=save_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
-    save_button.place(x=290, y=420, width=120, height=40)
+    save_button = tk.Button(main_win, text="変更を適用", font=label_font, command=save_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    save_button.place(x=290, y=400, width=120, height=40)
     
     repeat_check_log()
     
@@ -317,13 +320,13 @@ def show_last_execution_log ():
     log_win.protocol("WM_DELETE_WINDOW", close_log)
     
     if is_windows:
-        title_font = tk.font.Font(family="Yu Gothic", size=12)
+        title_font = tk.font.Font(family="Yu Gothic", size=11)
         label_font = tk.font.Font(family="Yu Gothic", size=10)
-        entry_font = tk.font.Font(family="Yu Gothic", size=11)
+        entry_font = tk.font.Font(family="Yu Gothic", size=9)
     else:
         title_font = tk.font.Font(size=11)
         label_font = tk.font.Font(size=10)
-        entry_font = tk.font.Font(size=10)
+        entry_font = tk.font.Font(size=9)
     
     log_file_name = "last_execution_log.json"
     
@@ -401,11 +404,9 @@ def open_app_info ():
     if is_windows:
         title_font = tk.font.Font(family="Yu Gothic", size=14)
         label_font = tk.font.Font(family="Yu Gothic", size=10)
-        entry_font = tk.font.Font(family="Yu Gothic", size=11)
     else:
         title_font = tk.font.Font(size=14)
         label_font = tk.font.Font(size=10)
-        entry_font = tk.font.Font(size=10)
     
     icon_image = tk.PhotoImage(file="files/icon.png")
     label_icon = tk.Label(app_info_win, image=icon_image, bg="#ffffff")
@@ -417,10 +418,10 @@ def open_app_info ():
     label_license = tk.Label(app_info_win, text=APP_LICENSE_TEXT, font=label_font, fg="#666666", bg="#ffffff")
     label_license.place(x=0, y=140, width=480, height=30)
     
-    button_open_license = tk.Button(app_info_win, text="ライセンス", font=entry_font, command=open_license_url, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    button_open_license = tk.Button(app_info_win, text="ライセンス", font=label_font, command=open_license_url, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
     button_open_license.place(x=90, y=180, width=140, height=30)
     
-    button_open_repository = tk.Button(app_info_win, text="ソースコード", font=entry_font, command=open_repository_url, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    button_open_repository = tk.Button(app_info_win, text="ソースコード", font=label_font, command=open_repository_url, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
     button_open_repository.place(x=250, y=180, width=140, height=30)
 
 
