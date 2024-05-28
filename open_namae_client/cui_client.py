@@ -2,6 +2,8 @@
 
 import sys
 import os
+import time
+import random
 import json
 
 import open_namae
@@ -11,6 +13,12 @@ if "-s" in sys.argv:
     silent_mode = True
 else:
     silent_mode = False
+
+if "-i" not in sys.argv:
+    if not silent_mode:
+        print("処理の開始を遅延しています...")
+    
+    time.sleep(random.randint(11,50))
 
 ddns_client = open_namae.ddns_client(silent_mode)
 
