@@ -8,8 +8,14 @@ from tkinter import messagebox
 import os
 import platform
 import json
+import webbrowser
 
 import open_namae
+
+
+APP_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
+APP_LICENSE_URL = "https://www.2pd.jp/license/"
+APP_REPOSITORY_URL = "https://fossil.2pd.jp/open_namae_client/"
 
 
 app_dir = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +35,7 @@ except:
     config = {
         "onamae_id" : "",
         "password" : "",
-        "ip_address_api" : "http://ifconfig.example.jp/",
+        "ip_address_api" : "http://api.example.jp/",
         "dns_host" : "ddnsclient.onamae.com",
         "dns_port" : 65010,
         "domains" : [
@@ -71,7 +77,9 @@ def open_main_window ():
     if is_windows:
         main_win.iconbitmap("files/icon.ico")
         
-        main_menu_file = tk.Menu(main_menu, tearoff=False)
+        main_menu_file = tk.Menu(main_menu, tearoff=False, activebackground="#ffffff")
+        main_menu_execution = tk.Menu(main_menu, tearoff=False, activebackground="#ffffff")
+        main_menu_help = tk.Menu(main_menu, tearoff=False, activebackground="#ffffff")
         
         status_font = tk.font.Font(family="Yu Gothic", size=12)
         label_font = tk.font.Font(family="Yu Gothic", size=11)
@@ -79,7 +87,9 @@ def open_main_window ():
     else:
         main_win.iconphoto(True, tk.PhotoImage(file="files/icon.png"))
         
-        main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", bd=10, relief="flat")
+        main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
+        main_menu_execution = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
+        main_menu_help = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
         
         status_font = tk.font.Font(size=11)
         label_font = tk.font.Font(size=10)
@@ -89,6 +99,15 @@ def open_main_window ():
     main_menu_file.add_command(label="変更を適用", command=save_config, font=("",10))
     main_menu_file.insert_separator(1)
     main_menu_file.add_command(label="終了", command=close_main_window, font=("",10))
+    
+    main_menu.add_cascade(label="実行とログ", menu=main_menu_execution)
+    main_menu_execution.add_command(label="この設定でDNS情報を更新", command=dns_update, font=("",10))
+    main_menu_execution.add_command(label="最終実行ログ", command=show_last_execution_log, font=("",10))
+    
+    main_menu.add_cascade(label="ヘルプ", menu=main_menu_help)
+    main_menu_help.add_command(label="ヘルプを開く", font=("",10), command=open_help_file)
+    main_menu_help.insert_separator(1)
+    main_menu_help.add_command(label="バージョン情報", font=("",10), command=open_app_info)
     
     label_execution_status = tk.Label(main_win, font=status_font, fg="#33bbdd", bg="#ffffff")
     label_execution_status.place(x=0, y=10, width=480, height=40)
@@ -277,6 +296,146 @@ def save_config ():
         json.dump(config, json_fp, ensure_ascii=False, indent=4)
     
     messagebox.showinfo(open_namae.APP_NAME ,"設定を保存しました")
+
+
+log_win = None
+
+def show_last_execution_log ():
+    global log_win
+    global is_windows
+    
+    if log_win != None and log_win.winfo_exists():
+        return
+    
+    log_win = tk.Toplevel()
+    
+    log_win.title("DNS情報更新ログ - " + open_namae.APP_NAME)
+    log_win.geometry("640x480")
+    log_win.resizable(0, 0)
+    log_win.configure(bg="#ffffff")
+    
+    log_win.protocol("WM_DELETE_WINDOW", close_log)
+    
+    if is_windows:
+        title_font = tk.font.Font(family="Yu Gothic", size=12)
+        label_font = tk.font.Font(family="Yu Gothic", size=10)
+        entry_font = tk.font.Font(family="Yu Gothic", size=11)
+    else:
+        title_font = tk.font.Font(size=11)
+        label_font = tk.font.Font(size=10)
+        entry_font = tk.font.Font(size=10)
+    
+    log_file_name = "last_execution_log.json"
+    
+    if os.path.isfile(log_file_name):
+        try:
+            with open(log_file_name, "r", encoding="utf-8") as log_fp:
+                log_data = json.load(log_fp)
+        except:
+            log_data = None
+    else:
+        log_data = None
+    
+    label_title = tk.Label(log_win, text="DNS情報更新ログ", font=title_font, fg="#333333", bg="#ffffff")
+    label_title.place(x=20, y=10, width=600, height=40)
+    
+    label_datetime = tk.Label(log_win, font=label_font, fg="#333333", bg="#ffffff")
+    label_datetime.place(x=10, y=50)
+    
+    label_succeeded = tk.Label(log_win, font=label_font, fg="#333333", bg="#ffffff")
+    label_succeeded.place(x=10, y=80)
+    
+    label_log = tk.Label(log_win, text="実行ログ", font=label_font, fg="#333333", bg="#ffffff")
+    label_log.place(x=10, y=120)
+    
+    log_area_scroll_y = tk.Scrollbar(log_win, orient="vertical", bg="#eeeeee", activebackground="#ffffff")
+    log_area = tk.Text(log_win, font=entry_font, fg="#333333", bg="#ffffff", padx=5, pady=5, relief="solid", yscrollcommand=log_area_scroll_y.set)
+    log_area_scroll_y["command"] = log_area.yview
+    log_area.place(x=15, y=150, width=595, height=310)
+    log_area_scroll_y.place(x=610, y=150, width=15, height=310)
+    
+    if log_data != None:
+        label_datetime["text"] = "実行日時: " + log_data["execution_datetime"]
+        
+        if log_data["execution_succeeded"]:
+            label_succeeded["text"] = "実行結果: 成功"
+        else:
+            label_succeeded["text"] = "実行結果: 失敗"
+        
+        log_area.insert("1.0", log_data["log_text"])
+    else:
+        label_datetime["text"] = "DNS情報更新処理の実行履歴がありません"
+    
+    log_area["state"] = "disabled"
+
+
+def close_log ():
+    global log_win
+    
+    log_win.destroy()
+
+
+def open_help_file():
+    webbrowser.open("file://" + os.path.abspath("./README.html"))
+
+
+app_info_win = None
+
+def open_app_info ():
+    global app_info_win
+    global is_windows
+    global icon_image
+    
+    if app_info_win != None and app_info_win.winfo_exists():
+        return
+    
+    app_info_win = tk.Toplevel()
+    
+    app_info_win.title("バージョン情報 - " + open_namae.APP_NAME)
+    app_info_win.geometry("480x240")
+    app_info_win.resizable(0, 0)
+    app_info_win.configure(bg="#ffffff")
+    
+    app_info_win.protocol("WM_DELETE_WINDOW", close_app_info)
+    
+    if is_windows:
+        title_font = tk.font.Font(family="Yu Gothic", size=14)
+        label_font = tk.font.Font(family="Yu Gothic", size=10)
+        entry_font = tk.font.Font(family="Yu Gothic", size=11)
+    else:
+        title_font = tk.font.Font(size=14)
+        label_font = tk.font.Font(size=10)
+        entry_font = tk.font.Font(size=10)
+    
+    icon_image = tk.PhotoImage(file="files/icon.png")
+    label_icon = tk.Label(app_info_win, image=icon_image, bg="#ffffff")
+    label_icon.place(x=208, y=28)
+    
+    label_title = tk.Label(app_info_win, text=open_namae.APP_NAME + " v" + open_namae.APP_VERSION, font=title_font, fg="#333333", bg="#ffffff")
+    label_title.place(x=0, y=100, width=480, height=40)
+    
+    label_license = tk.Label(app_info_win, text=APP_LICENSE_TEXT, font=label_font, fg="#666666", bg="#ffffff")
+    label_license.place(x=0, y=140, width=480, height=30)
+    
+    button_open_license = tk.Button(app_info_win, text="ライセンス", font=entry_font, command=open_license_url, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    button_open_license.place(x=90, y=180, width=140, height=30)
+    
+    button_open_repository = tk.Button(app_info_win, text="ソースコード", font=entry_font, command=open_repository_url, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    button_open_repository.place(x=250, y=180, width=140, height=30)
+
+
+def open_license_url ():
+    webbrowser.open(APP_LICENSE_URL)
+
+
+def open_repository_url ():
+    webbrowser.open(APP_REPOSITORY_URL)
+
+
+def close_app_info ():
+    global app_info_win
+    
+    app_info_win.destroy()
 
 
 open_main_window()

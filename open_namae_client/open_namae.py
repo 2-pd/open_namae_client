@@ -57,11 +57,13 @@ class ddns_client:
     
     
     def get_global_ip_address (self, ip_address_api):
+        self.add_log("・" + ip_address_api + " からグローバルIPアドレスを取得\n")
+        
         try:
             with urllib.request.urlopen(urllib.request.Request(ip_address_api), timeout=10) as response:
                 self.global_ip_address = response.read().decode()
             
-            self.add_log("・グローバルIPアドレス: " + self.global_ip_address + "\n")
+            self.add_log("IP: " + self.global_ip_address + "\n")
         except:
             self.add_log(traceback.format_exc(), True)
             
