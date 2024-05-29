@@ -5,9 +5,11 @@
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
+import math
 import os
 import platform
 import json
+import datetime
 import webbrowser
 
 import open_namae
@@ -64,7 +66,7 @@ def open_main_window ():
     
     main_win = tk.Tk()
     
-    main_win.title(open_namae.APP_NAME + " コントロールパネル v" + open_namae.APP_VERSION)
+    main_win.title(open_namae.APP_NAME + " コントロールパネル")
     main_win.geometry("480x480")
     main_win.resizable(0, 0)
     main_win.configure(bg="#ffffff")
@@ -88,9 +90,9 @@ def open_main_window ():
         
         main_menu = tk.Menu(main_win, bg="#eeeeee", activebackground="#ffffff", relief="flat")
         
-        main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
-        main_menu_execution = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
-        main_menu_help = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=10, relief="flat")
+        main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=5, relief="flat")
+        main_menu_execution = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=5, relief="flat")
+        main_menu_help = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=5, relief="flat")
         
         status_font = tk.font.Font(size=11)
         label_font = tk.font.Font(size=10)
@@ -108,9 +110,9 @@ def open_main_window ():
     main_menu_execution.add_command(label="最終実行ログ", command=show_last_execution_log, font=("",10))
     
     main_menu.add_cascade(label="ヘルプ", menu=main_menu_help)
-    main_menu_help.add_command(label="ヘルプを開く", font=("",10), command=open_help_file)
+    main_menu_help.add_command(label="ヘルプを開く", command=open_help_file, font=("",10))
     main_menu_help.insert_separator(1)
-    main_menu_help.add_command(label="バージョン情報", font=("",10), command=open_app_info)
+    main_menu_help.add_command(label="バージョン情報", command=open_app_info, font=("",10))
     
     label_execution_status = tk.Label(main_win, font=status_font, fg="#33bbdd", bg="#ffffff")
     label_execution_status.place(x=0, y=10, width=480, height=40)
@@ -205,7 +207,13 @@ def check_log ():
                     log_data = json.load(log_fp)
                 
                 if log_data["execution_succeeded"]:
-                    label_text = "DNS情報は " + log_data["execution_datetime"] + " に更新されました"
+                    elapsed_time = datetime.datetime.now().timestamp() - datetime.datetime.strptime(log_data["execution_datetime"], "%Y-%m-%d %H:%M:%S").timestamp()
+                    
+                    if elapsed_time < 172800:
+                        label_text = "DNS情報は " + log_data["execution_datetime"] + " に更新されました"
+                    else:
+                        error_occurred = True
+                        label_text = "前回のDNS情報更新から " + str(math.floor(elapsed_time / 86400)) + " 日経過しています"
                 else:
                     error_occurred = True
                     label_text = log_data["execution_datetime"] + " にDNS情報の更新でエラーが発生しました"
