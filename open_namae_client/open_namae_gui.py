@@ -138,15 +138,15 @@ def open_main_window ():
     entry_ip_address_api.insert(0, config["ip_address_api"])
     entry_ip_address_api.place(x=155, y=100)
     
-    label_dns_host = tk.Label(main_win, text="DDNSホスト:", font=label_font, fg="#333333", bg="#ffffff")
+    label_dns_host = tk.Label(main_win, text="DDNS更新  ホスト:", font=label_font, fg="#333333", bg="#ffffff")
     label_dns_host.place(x=10, y=140)
     
     entry_dns_host = tk.Entry(main_win, width=25, font=entry_font, fg="#333333", bg="#ffffff", bd=1, relief="solid")
     entry_dns_host.insert(0, config["dns_host"])
-    entry_dns_host.place(x=100, y=140)
+    entry_dns_host.place(x=135, y=140)
     
-    label_dns_port = tk.Label(main_win, text="DDNSポート:", font=label_font, fg="#333333", bg="#ffffff")
-    label_dns_port.place(x=290, y=140)
+    label_dns_port = tk.Label(main_win, text="ポート:", font=label_font, fg="#333333", bg="#ffffff")
+    label_dns_port.place(x=325, y=140)
     
     entry_dns_port = tk.Entry(main_win, width=10, font=entry_font, fg="#333333", bg="#ffffff", bd=1, relief="solid")
     entry_dns_port.insert(0, config["dns_port"])
@@ -187,9 +187,11 @@ def close_main_window ():
 
 
 last_execution_log_mtime = None
+last_log_checked = None
 
 def check_log ():
     global last_execution_log_mtime
+    global last_log_checked
     global label_execution_status
     
     log_file_name = "last_execution_log.json"
@@ -198,9 +200,11 @@ def check_log ():
     
     if os.path.isfile(log_file_name):
         log_file_mtime = os.path.getmtime(log_file_name)
+        now_timestamp = datetime.datetime.now().timestamp()
         
-        if last_execution_log_mtime == None or log_file_mtime > last_execution_log_mtime:
+        if last_execution_log_mtime == None or log_file_mtime > last_execution_log_mtime or last_log_checked < now_timestamp - 3600:
             last_execution_log_mtime = log_file_mtime
+            last_log_checked = now_timestamp
             
             try:
                 with open(log_file_name, "r", encoding="utf-8") as log_fp:
