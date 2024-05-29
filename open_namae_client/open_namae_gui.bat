@@ -1,0 +1,1 @@
+start pythonw open_namae_gui.py

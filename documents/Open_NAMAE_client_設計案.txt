@@ -8,14 +8,14 @@ _/_/_/_/ 基本方針 _/_/_/_/
 
 ・「お名前.com DDNSクライアント」のオープンソース実装
 ・システム要件 : Python 3(標準ライブラリのみで動作)、GNU/LinuxとWindowsの双方に対応
-・GUIの設定画面とcronで実行できるCUIツールを持つ
+・GUIの設定画面とcronで実行できるCUIクライアントを持つ
 
 
 _/_/_/_/ ディレクトリ構造 _/_/_/_/
 
 /
 └ open_namae.py ・・・CUIとGUIで共有する関数
-└ cui_client.py ・・・CUIツール本体
+└ cui_client.py ・・・CUIクライアント本体
 └ open_namae_gui.py ・・・GUI本体
 └ open_namae_gui.bat ・・・GUI起動用バッチファイル
 └ config.json ・・・各種設定(open_namae_gui.pyにより自動生成される)
@@ -23,6 +23,7 @@ _/_/_/_/ ディレクトリ構造 _/_/_/_/
 └ files/
    └ icon.ico ・・・Windowsで使用するGUI用アイコン
    └ icon.png ・・・GNU/Linuxで使用するGUI用アイコン
+└ README.html ・・・ユーザーマニュアル
 
 
 _/_/_/_/ 各設定ファイル _/_/_/_/
@@ -50,3 +51,11 @@ _/_/_/_/ 各設定ファイル _/_/_/_/
     "execution_datetime" : 「YYYY-MM-DD hh:mm:ss」形式の最終実行時刻,
     "log_text" : ログテキスト
 }
+
+
+_/_/_/_/ コマンドラインオプション _/_/_/_/
+
+■■■ cui_client.py ■■■
+
+-s : 標準出力に実行結果を出力しない
+-i : 負荷分散のための待ち時間を無視して即座に処理を実行する

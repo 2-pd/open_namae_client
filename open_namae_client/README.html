@@ -1,0 +1,195 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Open NAMAE clientの使い方</title>
+    <link rel="shortcut icon" href="files/icon.ico">
+    <style>
+        * {
+            font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0 10px 100px 20px;
+            
+            line-height: 180%;
+            color: #333333;
+        }
+        
+        h1 {
+            font-size: 22px;
+            
+            margin-top: 20px;
+            margin-left: -15px;
+            
+            border-left: 6px solid #33bbdd;
+            
+            line-height: 48px;
+            text-indent: 8px;
+        }
+        
+        h2 {
+            font-size: 18px;
+            
+            margin-top: 40px;
+            margin-left: -10px;
+            
+            background-color: #33bbdd;
+            
+            line-height: 40px;
+            color: #ffffff;
+            text-indent: 10px;
+        }
+        
+        h3 {
+            font-size: medium;
+            
+            margin-top: 40px;
+            margin-left: -5px;
+            
+            border-left: 4px solid #33bbdd;
+            
+            line-height: 32px;
+            text-indent: 6px;
+        }
+        
+        h4 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        a {
+            color: #1199bb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Open NAMAE clientの使い方</h1>
+    
+    <h2>目次</h2>
+    <a href="#gaiyo">概要</a><br>
+    <br>
+    <a href="#yoken">システム要件</a><br>
+    <a href="#install">インストール</a><br>
+    <br>
+    <a href="#server">DDNSサーバの設定</a><br>
+    <br>
+    <a href="#gui">GUIで設定を行う</a><br>
+    　<a href="#kido">GUIの起動</a><br>
+    　<a href="#settei">各設定項目について</a><br>
+    　<a href="#log">実行とログ</a><br>
+    <br>
+    <a href="#cui">CUIクライアント</a><br>
+    　<a href="#zikko">CUIクライアントを実行する</a><br>
+    　<a href="#cron">cronによる定期実行</a><br>
+    <br>
+    <a href="#license">ライセンス</a><br>
+    <a href="#toiawase">お問い合わせ</a>
+    
+    
+    <h2 id="gaiyo">概要</h2>
+    本ツールは、GNU/LinuxとWindowsの双方で動作可能な、「お名前.com DDNSクライアント」の非公式オープンソース実装です。<br>
+    アプリ本体はcronから実行可能なようCUIとしつつも、設定画面はGUIとすることで公式実装からの切り替えが容易となるよう配慮しました。<br>
+    <br>
+    このほか、実行時間をランダムに遅延させて接続先サーバの負荷を分散させる機能や、複数ドメインのDNS情報を一括で更新する機能を搭載しています。
+    
+    
+    <h2 id="yoken">システム要件</h2>
+    本ツールは、WindowsまたはGNU/Linuxのデスクトップ環境で動作するGUIアプリケーションです。<br>
+    <br>
+    本ツールを使用するためには、あらかじめ、使用するPCまたはGUIサーバに最新のPython 3実行環境をインストールしておく必要があります。<br>
+    <br>
+    WindowsにPython 3をインストールする際、カスタム構成でインストールする場合は、「tcl/tk」を構成に含めるようにしてください。<br>
+    また、標準構成でインストールする場合でも、インストール画面の「Add Python 3.* to PATH」はチェックが入った状態でインストールを実行してください。<br>
+    <br>
+    GNU/Linuxの多くのディストリビューションでは標準でpython3パッケージがインストールされていますが、本ツールを使用するためにはこれに加えてpython3-tkinter(ディストリビューションによってはpython3-tk)パッケージが必要となります。
+    
+    
+    <h2 id="install">インストール</h2>
+    本ツールは、OSを問わず、ダウンロードした圧縮ファイルを任意のフォルダに展開することでそのまま使用することができます。<br>
+    DDNS更新に使用する各種設定やDDNS更新処理の実行ログなどは本ツールのフォルダ内に保存されるため、アンインストールは本ツールをフォルダごと削除するだけで完了します。
+    
+    
+    <h2 id="server">DDNSサーバの設定</h2>
+    本ツールは、お名前.comの公式DDNSクライアントと同様、お名前.comの管理画面で行うドメインの設定はデフォルト値のままでDDNS機能を使用することができます。<br>
+    サブドメインを使用する場合でも、公式DDNSクライアントの場合と同様、事前にそのサブドメインのAレコードを作成していれば問題なくDDNS機能の使用が可能です。
+    
+    
+    <h2 id="gui">GUIで行う設定</h2>
+    
+    <h3 id="kido">GUIの起動</h3>
+    Windowsの場合は、 open_namae_gui.bat をダブルクリックすれば本ツールのGUIが起動します。<br>
+    GNU/Linuxの場合は、 open_namae_gui.py をダブルクリックするか、同ファイルを端末エミュレータからPython3コマンドで実行してください。<br>
+    <br>
+    GUIではDDNS情報更新の各種設定やDDNS情報更新ログの確認ができます。
+    
+    <h3 id="settei">各設定項目について</h3>
+    本ツールを使用してDNS情報を更新するためには、GUIで以下の項目を設定する必要があります。
+    
+    <h4>お名前ID</h4>
+    数字の並びで表される「お名前.com」のユーザーIDです。
+    
+    <h4>パスワード</h4>
+    「お名前.com」の管理画面にログインする際に使用するパスワードです。
+    
+    <h4>グローバルIP確認URL</h4>
+    本ツールを実行している端末のグローバルIPアドレスを取得するためにアクセスする外部URLを指定します。<br>
+    この項目はデフォルトではダミーのURLが指定されているため、ipifyやipifyを実行するその他のインスタンスなど、アクセス者のIPv4アドレスをプレーンテキストで返すAPIのURLに変更してください。<br>
+    <br>
+    なお、こうしたAPIには月間の使用回数に制限のあるものなどが存在します。本番環境で使用する場合は事前に各APIの利用規約をご確認ください。
+    
+    <h4>DDNS更新ホスト</h4>
+    DDNSサーバのDNS情報更新用エンドポイントのドメインを指定します。基本的にデフォルト値から変更する必要はありません。
+    
+    <h4>DDNS更新ポート</h4>
+    DDNSサーバのDNS情報更新用エンドポイントのポート番号を指定します。基本的にデフォルト値から変更する必要はありません。
+    
+    <h4>ドメイン</h4>
+    DNS情報を更新するドメインを1行に1つずつ入力します。<br>
+    サブドメインを使用する場合は、サブドメインと本ドメインをピリオドではなくセミコロン(「;」)で区切ってください。
+    
+    <h3 id="log">実行とログ</h3>
+    DNS情報の更新処理はGUIから直接実行することもできます。<br>
+    DNSの更新を実行してエラーが発生した場合は、メニューから実行ログを表示することでエラーの詳細を確認可能です。<br>
+    <br>
+    また、GUIの上部に表示されるDNS情報更新結果は1分おきに自動更新されるため、cronによるCUIクライアント実行が正常に行われているかどうかをリアルタイムで把握することができます。
+    
+    
+    <h2 id="cui">CUIクライアント</h2>
+    
+    <h3 id="zikko">CUIクライアントを実行する</h3>
+    CUI環境、及び、cronによる本ツールの定期実行では、以下のコマンドでCUIクライアントを使用してDNS情報を更新します。<br>
+    <br>
+    <b>python3 /path/to/open_namae_client/cui_client.py</b><br>
+    ※ファイルパスは環境に合わせて変更してください。
+    
+    <h4>コマンドラインオプション</h4>
+    CUIクライアントではコマンドライン引数として以下のオプションが使用可能です。<br>
+    <br>
+    <b>-i</b> : 負荷分散のための待ち時間を無視して即座に処理を実行します。cronによる定期実行ではこのオプションを使用しないでください。<br>
+    <b>-s</b> : 標準出力に実行結果を出力しません。
+    
+    <h3 id="cron">cronによる定期実行</h3>
+    CUIクライアントはcronにより定期実行することが可能です。<br>
+    例えば、毎時3分から43分まで20分間隔でCUIクライアント実行する場合は、以下のようにcrontabへ設定します。<br>
+    <br>
+    <b>3-43/20 * * * * python3 /path/to/open_namae_client/cui_client.py -s</b><br>
+    ※負荷分散のため、毎時0分や10分などのきりのよい時間に実行する設定は回避してください。<br>
+    ※ファイルパスは環境に合わせて変更してください。
+    
+    
+    <h2 id="license">ライセンス</h2>
+    本ツール本体、及び、この利用説明を含む各付属ファイルは<a href="https://www.2pd.jp/license/">無権利創作宣言</a>に準拠して著作権放棄されています。<br>
+    これらのファイルの二次利用について、著作権による制約はありません。
+    
+    
+    <h2 id="toiawase">お問い合わせ</h2>
+    本ツールについてのお問い合わせは<a href="https://create.2pd.jp/">Midari Create</a>までお願いします。
+</body>
+</html>
