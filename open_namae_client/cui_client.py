@@ -31,10 +31,14 @@ except:
     
     sys.exit()
 
-if ddns_client.get_global_ip_address(config["ip_address_api"]):
-    ddns_client.update_dns_records(config["dns_host"], config["dns_port"], config["onamae_id"], config["password"], config["domains"])
-
-ddns_client.save_log()
-
-if not silent_mode and ddns_client.execution_succeeded:
-    print("DNS情報を更新しました")
+if "-f" in sys.argv or ddns_client.get_global_ip_address(config["ip_address_api"]):
+    if ddns_client.check_update_needed(config["modified_datetime"]):
+        ddns_client.update_dns_records(config["dns_host"], config["dns_port"], config["onamae_id"], config["password"], config["domains"])
+        
+        ddns_client.save_log()
+        
+        if not silent_mode and ddns_client.execution_succeeded:
+            print("DNS情報を更新しました")
+    else:
+        if not silent_mode:
+            print("DNS情報は更新不要です")

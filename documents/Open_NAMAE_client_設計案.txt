@@ -28,7 +28,7 @@ _/_/_/_/ ディレクトリ構造 _/_/_/_/
 
 _/_/_/_/ 各設定ファイル _/_/_/_/
 
-■■■ config.json ■■■
+███ config.json ███
 
 {
     "onamae_id" : お名前ID,
@@ -41,21 +41,25 @@ _/_/_/_/ 各設定ファイル _/_/_/_/
             "host_name" : ホスト名,
             "domain_name" : ドメイン名
         }...
-    ]
+    ],
+    "modified_datetime" : 「YYYY-MM-DD hh:mm:ss」形式でこの設定ファイルの更新日時
 }
 
-■■■ last_execution_log.json ■■■
+
+███ last_execution_log.json ███
 
 {
     "execution_succeeded" : 最終実行の結果が成功がどうか(BOOL値),
     "execution_datetime" : 「YYYY-MM-DD hh:mm:ss」形式の最終実行時刻,
+    "global_ip_address" : 最終実行時の自端末グローバルIPアドレス(取得失敗の場合はnull),
     "log_text" : ログテキスト
 }
 
 
 _/_/_/_/ コマンドラインオプション _/_/_/_/
 
-■■■ cui_client.py ■■■
+███ cui_client.py ███
 
 -s : 標準出力に実行結果を出力しない
 -i : 負荷分散のための待ち時間を無視して即座に処理を実行する
+-f : 自身のグローバルIPアドレスが変わっておらず、かつ、前回の実行から20時間以上経過していない場合でも処理を実行する

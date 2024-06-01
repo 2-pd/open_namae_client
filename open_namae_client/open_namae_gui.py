@@ -202,7 +202,7 @@ def check_log ():
         log_file_mtime = os.path.getmtime(log_file_name)
         now_timestamp = datetime.datetime.now().timestamp()
         
-        if last_execution_log_mtime == None or log_file_mtime > last_execution_log_mtime or last_log_checked < now_timestamp - 3600:
+        if last_execution_log_mtime is None or log_file_mtime > last_execution_log_mtime or last_log_checked < now_timestamp - 3600:
             last_execution_log_mtime = log_file_mtime
             last_log_checked = now_timestamp
             
@@ -280,6 +280,8 @@ def update_config ():
                 "host_name" : domain_data[0].strip(),
                 "domain_name" : domain_data[-1].strip()
             })
+    
+    config["modified_datetime"] = str(datetime.datetime.today())[0:19]
 
 
 def dns_update ():
@@ -319,7 +321,7 @@ def show_last_execution_log ():
     global log_win
     global is_windows
     
-    if log_win != None and log_win.winfo_exists():
+    if log_win is not None and log_win.winfo_exists():
         return
     
     log_win = tk.Toplevel()
@@ -369,13 +371,18 @@ def show_last_execution_log ():
     log_area.place(x=15, y=150, width=595, height=310)
     log_area_scroll_y.place(x=610, y=150, width=15, height=310)
     
-    if log_data != None:
+    if log_data is not None:
         label_datetime["text"] = "実行日時: " + log_data["execution_datetime"]
         
-        if log_data["execution_succeeded"]:
-            label_succeeded["text"] = "実行結果: 成功"
+        if log_data["global_ip_address"] is not None:
+            ip_address_text = "グローバルIPアドレス " + log_data["global_ip_address"]
         else:
-            label_succeeded["text"] = "実行結果: 失敗"
+            ip_address_text = "グローバルIPアドレス取得失敗"
+        
+        if log_data["execution_succeeded"]:
+            label_succeeded["text"] = "実行結果: 成功 (" + ip_address_text + ")"
+        else:
+            label_succeeded["text"] = "実行結果: 失敗 (" + ip_address_text + ")"
         
         log_area.insert("1.0", log_data["log_text"])
     else:
@@ -401,7 +408,7 @@ def open_app_info ():
     global is_windows
     global icon_image
     
-    if app_info_win != None and app_info_win.winfo_exists():
+    if app_info_win is not None and app_info_win.winfo_exists():
         return
     
     app_info_win = tk.Toplevel()
