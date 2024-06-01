@@ -6,6 +6,7 @@ import urllib.request
 import socket
 import ssl
 import json
+import re
 import datetime
 
 
@@ -71,15 +72,30 @@ class ddns_client:
         
         try:
             with urllib.request.urlopen(urllib.request.Request(ip_address_api), timeout=10) as response:
-                self.global_ip_address = response.read().decode()
+                ip_address = response.read().decode()
+        except urllib.error.HTTPError as err:
+            self.add_log("サーバがエラーコード " + str(err.code) + " を返しました\n", True)
             
-            self.add_log("IP: " + self.global_ip_address + "\n")
-        except:
+            return False
+        except urllib.error.URLError:
+            self.add_log("サーバに接続できませんでした\n", True)
+            
+            return False
+        except Exception:
             self.add_log(traceback.format_exc(), True)
             
             return False
         
-        return True
+        if re.fullmatch(r"^((1[0-9]{2}|2([0-4][0-9]|5[0-5])|[1-9]?[0-9])\.){3}(1[0-9]{2}|2([0-4][0-9]|5[0-5])|[1-9]?[0-9])$", ip_address) != None:
+            self.global_ip_address = ip_address
+            
+            self.add_log("IP: " + self.global_ip_address + "\n")
+            
+            return True
+        else:
+            self.add_log("取得した文字列が正しいIPv4アドレスではありません\n", True)
+            
+            return False
     
     
     def check_recv (self, sock_recv):
