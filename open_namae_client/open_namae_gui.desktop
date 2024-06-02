@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Categories=Network
+Name=Open NAMAE client
+Name[ja]=Open NAMAE client
+Comment=DDNS client
+Comment[ja]=DDNSクライアント
+Exec=/■使用環境に合わせて絶対パスを入力■/open_namae_client/open_namae_gui.py
+Icon=/■使用環境に合わせて絶対パスを入力■/open_namae_client/files/icon.png
+Terminal=false

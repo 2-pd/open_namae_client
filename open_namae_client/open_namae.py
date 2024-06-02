@@ -6,6 +6,7 @@ import urllib.request
 import socket
 import ssl
 import json
+import re
 import datetime
 
 
@@ -20,7 +21,7 @@ import datetime
 
 
 APP_NAME = "Open NAMAE client"
-APP_VERSION = "24.05-1"
+APP_VERSION = "24.06-1"
 
 
 class ddns_client:
@@ -31,6 +32,8 @@ class ddns_client:
         self.log_text = APP_NAME + " v" + APP_VERSION + "\n\n"
         self.global_ip_address = None
         self.execution_succeeded = True
+        
+        self.log_file_path = os.path.dirname(os.path.abspath(__file__)) + "/last_execution_log.json"
     
     
     def add_log (self, log, is_error=False):
@@ -46,22 +49,21 @@ class ddns_client:
     
     
     def save_log (self):
-        log_file_path = os.path.dirname(os.path.abspath(__file__)) + "/last_execution_log.json"
-        
         log_data = {
             "execution_succeeded" : self.execution_succeeded,
             "execution_datetime" : self.execution_datetime,
+            "global_ip_address" : self.global_ip_address,
             "log_text" : self.log_text
         }
         
         try:
-           with open(log_file_path, "w", encoding="utf-8") as json_fp:
-                json.dump(log_data, json_fp, ensure_ascii=False, indent=4)
+           with open(self.log_file_path, "w", encoding="utf-8") as log_fp:
+                json.dump(log_data, log_fp, ensure_ascii=False, indent=4)
         except:
             return False
         
-        if os.stat(log_file_path).st_uid == os.geteuid():
-            os.chmod(log_file_path, 0o766)
+        if os.stat(self.log_file_path).st_uid == os.geteuid():
+            os.chmod(self.log_file_path, 0o766)
         
         return True
     
@@ -71,15 +73,51 @@ class ddns_client:
         
         try:
             with urllib.request.urlopen(urllib.request.Request(ip_address_api), timeout=10) as response:
-                self.global_ip_address = response.read().decode()
+                ip_address = response.read().decode().strip()
+        except urllib.error.HTTPError as err:
+            self.add_log("サーバがエラーコード " + str(err.code) + " を返しました\n", True)
             
-            self.add_log("IP: " + self.global_ip_address + "\n")
-        except:
+            return False
+        except urllib.error.URLError:
+            self.add_log("サーバに接続できませんでした\n", True)
+            
+            return False
+        except Exception:
             self.add_log(traceback.format_exc(), True)
             
             return False
         
-        return True
+        if re.fullmatch(r"^((1[0-9]{2}|2([0-4][0-9]|5[0-5])|[1-9]?[0-9])\.){3}(1[0-9]{2}|2([0-4][0-9]|5[0-5])|[1-9]?[0-9])$", ip_address) is not None:
+            self.global_ip_address = ip_address
+            
+            self.add_log("IP: " + self.global_ip_address + "\n")
+            
+            return True
+        else:
+            self.add_log("取得した文字列が正しいIPv4アドレスではありません\n", True)
+            
+            return False
+    
+    
+    def check_update_needed (self, config_modified):
+        if not os.path.isfile(self.log_file_path):
+            return True
+        
+        try:
+            with open(self.log_file_path, "r", encoding="utf-8") as log_fp:
+                log_data = json.load(log_fp)
+        except:
+            return True
+        
+        if not log_data["execution_succeeded"] or log_data["global_ip_address"] != self.global_ip_address or config_modified > log_data["execution_datetime"]:
+            return True
+        
+        elapsed_time = datetime.datetime.now().timestamp() - datetime.datetime.strptime(log_data["execution_datetime"], "%Y-%m-%d %H:%M:%S").timestamp()
+        
+        if elapsed_time >= 72000:
+            return True
+        else:
+            return False
     
     
     def check_recv (self, sock_recv):
@@ -96,7 +134,7 @@ class ddns_client:
     
     
     def update_dns_records (self, dns_host, dns_port, onamae_id, password, domains):
-        if self.global_ip_address == None:
+        if self.global_ip_address is None:
             return False
         
         try:
