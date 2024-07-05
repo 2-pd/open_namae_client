@@ -60,9 +60,8 @@ def open_main_window ():
     global entry_onamae_id
     global entry_password
     global entry_ip_address_api
-    global entry_dns_host
-    global entry_dns_port
     global domains_area
+    global label_global_ip_address
     
     main_win = tk.Tk()
     
@@ -78,8 +77,8 @@ def open_main_window ():
         
         main_menu = tk.Menu(main_win)
         
-        main_menu_file = tk.Menu(main_menu, tearoff=False)
         main_menu_execution = tk.Menu(main_menu, tearoff=False)
+        main_menu_config = tk.Menu(main_menu, tearoff=False)
         main_menu_help = tk.Menu(main_menu, tearoff=False)
         
         status_font = tk.font.Font(family="Yu Gothic", size=11)
@@ -88,11 +87,11 @@ def open_main_window ():
     else:
         main_win.iconphoto(True, tk.PhotoImage(file="files/icon.png"))
         
-        main_menu = tk.Menu(main_win, bg="#eeeeee", activebackground="#ffffff", relief="flat")
+        main_menu = tk.Menu(main_win, bg="#f7f7f7", activebackground="#ffffff", relief="flat")
         
-        main_menu_file = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=5, relief="flat")
-        main_menu_execution = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=5, relief="flat")
-        main_menu_help = tk.Menu(main_menu, tearoff=False, bg="#eeeeee", activebackground="#ffffff", bd=5, relief="flat")
+        main_menu_execution = tk.Menu(main_menu, tearoff=False, bg="#f7f7f7", activebackground="#ffffff", bd=5, relief="flat")
+        main_menu_config = tk.Menu(main_menu, tearoff=False, bg="#f7f7f7", activebackground="#ffffff", bd=5, relief="flat")
+        main_menu_help = tk.Menu(main_menu, tearoff=False, bg="#f7f7f7", activebackground="#ffffff", bd=5, relief="flat")
         
         status_font = tk.font.Font(size=11)
         label_font = tk.font.Font(size=10)
@@ -100,14 +99,14 @@ def open_main_window ():
     
     main_win.configure(menu=main_menu)
     
-    main_menu.add_cascade(label="ファイル", menu=main_menu_file)
-    main_menu_file.add_command(label="変更を適用", command=save_config, font=("",10))
-    main_menu_file.insert_separator(1)
-    main_menu_file.add_command(label="終了", command=close_main_window, font=("",10))
-    
     main_menu.add_cascade(label="実行とログ", menu=main_menu_execution)
     main_menu_execution.add_command(label="この設定でDNS情報を更新", command=dns_update, font=("",10))
     main_menu_execution.add_command(label="最終実行ログ", command=show_last_execution_log, font=("",10))
+    
+    main_menu.add_cascade(label="設定", menu=main_menu_config)
+    main_menu_config.add_command(label="変更を適用", command=save_config, font=("",10))
+    main_menu_config.insert_separator(1)
+    main_menu_config.add_command(label="高度な設定", command=open_advanced_config, font=("",10))
     
     main_menu.add_cascade(label="ヘルプ", menu=main_menu_help)
     main_menu_help.add_command(label="ヘルプを開く", command=open_help_file, font=("",10))
@@ -138,28 +137,14 @@ def open_main_window ():
     entry_ip_address_api.insert(0, config["ip_address_api"])
     entry_ip_address_api.place(x=155, y=100)
     
-    label_dns_host = tk.Label(main_win, text="DDNS更新  ホスト:", font=label_font, fg="#333333", bg="#ffffff")
-    label_dns_host.place(x=10, y=140)
-    
-    entry_dns_host = tk.Entry(main_win, width=25, font=entry_font, fg="#333333", bg="#ffffff", bd=1, relief="solid")
-    entry_dns_host.insert(0, config["dns_host"])
-    entry_dns_host.place(x=135, y=140)
-    
-    label_dns_port = tk.Label(main_win, text="ポート:", font=label_font, fg="#333333", bg="#ffffff")
-    label_dns_port.place(x=325, y=140)
-    
-    entry_dns_port = tk.Entry(main_win, width=10, font=entry_font, fg="#333333", bg="#ffffff", bd=1, relief="solid")
-    entry_dns_port.insert(0, config["dns_port"])
-    entry_dns_port.place(x=380, y=140)
-    
     label_domains = tk.Label(main_win, text="ドメイン (ホスト名とドメイン名はセミコロンで区切って入力)", font=label_font, fg="#333333", bg="#ffffff")
-    label_domains.place(x=10, y=190)
+    label_domains.place(x=10, y=150)
     
     domains_area_scroll_y = tk.Scrollbar(main_win, orient="vertical", bg="#eeeeee", activebackground="#ffffff")
     domains_area = tk.Text(main_win, font=entry_font, fg="#333333", bg="#ffffff", padx=5, pady=5, relief="solid", yscrollcommand=domains_area_scroll_y.set)
     domains_area_scroll_y["command"] = domains_area.yview
-    domains_area.place(x=15, y=220, width=435, height=160)
-    domains_area_scroll_y.place(x=450, y=220, width=15, height=160)
+    domains_area.place(x=15, y=180, width=435, height=160)
+    domains_area_scroll_y.place(x=450, y=180, width=15, height=160)
     
     for domain_data in config["domains"]:
         if "host_name" in domain_data:
@@ -168,10 +153,13 @@ def open_main_window ():
             domains_area.insert(tk.END, domain_data["domain_name"] + "\n")
     
     dns_update_button = tk.Button(main_win, text="この設定でDNS情報を更新", font=label_font, command=dns_update, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
-    dns_update_button.place(x=70, y=400, width=200, height=40)
+    dns_update_button.place(x=70, y=360, width=200, height=40)
     
     save_button = tk.Button(main_win, text="変更を適用", font=label_font, command=save_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
-    save_button.place(x=290, y=400, width=120, height=40)
+    save_button.place(x=290, y=360, width=120, height=40)
+    
+    label_global_ip_address = tk.Label(main_win, font=label_font, fg="#999999", bg="#ffffff")
+    label_global_ip_address.place(x=270, y=420)
     
     repeat_check_log()
     
@@ -193,6 +181,7 @@ def check_log ():
     global last_execution_log_mtime
     global last_log_checked
     global label_execution_status
+    global label_global_ip_address
     
     log_file_name = "last_execution_log.json"
     
@@ -221,14 +210,21 @@ def check_log ():
                 else:
                     error_occurred = True
                     label_text = log_data["execution_datetime"] + " にDNS情報の更新でエラーが発生しました"
+                
+                if log_data["global_ip_address"] is not None:
+                    label_global_ip_address["text"] = "前回実行時IP: " + log_data["global_ip_address"]
+                else:
+                    label_global_ip_address["text"] = "前回実行時IP取得失敗"
             except:
                 error_occurred = True
                 label_text = "ログファイルが読み込めません"
+                label_global_ip_address["text"] = ""
         else:
             return
     else:
         error_occurred = True
         label_text = "DNS情報更新処理の実行履歴がありません"
+        label_global_ip_address["text"] = ""
     
     if error_occurred:
         label_execution_status["fg"] = "#ee3333"
@@ -251,15 +247,11 @@ def update_config ():
     global entry_onamae_id
     global entry_password
     global entry_ip_address_api
-    global entry_dns_host
-    global entry_dns_port
     global domains_area
     
     config["onamae_id"] = entry_onamae_id.get()
     config["password"] = entry_password.get()
     config["ip_address_api"] = entry_ip_address_api.get()
-    config["dns_host"] = entry_dns_host.get()
-    config["dns_port"] = int(entry_dns_port.get())
     
     config["domains"] = []
     domains = domains_area.get("1.0", tk.END).split()
@@ -304,15 +296,17 @@ def dns_update ():
     messagebox.showinfo(open_namae.APP_NAME ,"DNS情報の更新が終了しました")
 
 
-def save_config ():
+def save_config (get_entry_values=True, show_dialog=True):
     global config
     
-    update_config()
+    if get_entry_values:
+        update_config()
     
     with open("config.json", "w", encoding="utf-8") as json_fp:
         json.dump(config, json_fp, ensure_ascii=False, indent=4)
     
-    messagebox.showinfo(open_namae.APP_NAME ,"設定を保存しました")
+    if show_dialog:
+        messagebox.showinfo(open_namae.APP_NAME ,"設定を保存しました")
 
 
 log_win = None
@@ -397,8 +391,83 @@ def close_log ():
     log_win.destroy()
 
 
-def open_help_file():
+def open_help_file ():
     webbrowser.open("file://" + os.path.abspath("./README.html"))
+
+
+advanced_config_win = None
+
+def open_advanced_config ():
+    global config
+    global advanced_config_win
+    global is_windows
+    global entry_dns_host
+    global entry_dns_port
+    
+    if advanced_config_win is not None and advanced_config_win.winfo_exists():
+        return
+    
+    advanced_config_win = tk.Toplevel()
+    
+    advanced_config_win.title("高度な設定 - " + open_namae.APP_NAME)
+    advanced_config_win.geometry("480x360")
+    advanced_config_win.resizable(0, 0)
+    advanced_config_win.configure(bg="#ffffff")
+    
+    advanced_config_win.protocol("WM_DELETE_WINDOW", close_advanced_config)
+    
+    if is_windows:
+        heading_font = tk.font.Font(family="Yu Gothic", size=11)
+        label_font = tk.font.Font(family="Yu Gothic", size=10)
+        entry_font = tk.font.Font(family="Yu Gothic", size=9)
+    else:
+        heading_font = tk.font.Font(size=11)
+        label_font = tk.font.Font(size=10)
+        entry_font = tk.font.Font(size=9)
+    
+    label_dns = tk.Label(advanced_config_win, text="DDNSサーバ接続設定", font=heading_font, fg="#333333", bg="#ffffff")
+    label_dns.place(x=10, y=10)
+    
+    label_dns_host = tk.Label(advanced_config_win, text="ホスト:", font=label_font, fg="#333333", bg="#ffffff")
+    label_dns_host.place(x=20, y=40)
+    
+    entry_dns_host = tk.Entry(advanced_config_win, width=30, font=entry_font, fg="#333333", bg="#ffffff", bd=1, relief="solid")
+    entry_dns_host.insert(0, config["dns_host"])
+    entry_dns_host.place(x=70, y=40)
+    
+    label_dns_port = tk.Label(advanced_config_win, text="ポート:", font=label_font, fg="#333333", bg="#ffffff")
+    label_dns_port.place(x=300, y=40)
+    
+    entry_dns_port = tk.Entry(advanced_config_win, width=10, font=entry_font, fg="#333333", bg="#ffffff", bd=1, relief="solid")
+    entry_dns_port.insert(0, config["dns_port"])
+    entry_dns_port.place(x=350, y=40)
+    
+    button_config_ok = tk.Button(advanced_config_win, text="OK", font=label_font, command=save_advanced_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    button_config_ok.place(x=90, y=300, width=140, height=30)
+    
+    button_config_cancel = tk.Button(advanced_config_win, text="キャンセル", font=label_font, command=close_advanced_config, fg="#ffffff", bg="#33bbdd", relief="flat", highlightbackground="#33bbdd", activeforeground="#ffffff", activebackground="#aaeeff")
+    button_config_cancel.place(x=250, y=300, width=140, height=30)
+
+
+def close_advanced_config ():
+    global advanced_config_win
+    
+    advanced_config_win.destroy()
+
+
+def save_advanced_config ():
+    global config
+    global entry_dns_host
+    global entry_dns_port
+    
+    config["dns_host"] = entry_dns_host.get()
+    config["dns_port"] = int(entry_dns_port.get())
+    
+    config["modified_datetime"] = str(datetime.datetime.today())[0:19]
+    
+    save_config(False, False)
+    
+    close_advanced_config()
 
 
 app_info_win = None
