@@ -21,7 +21,7 @@ import datetime
 
 
 APP_NAME = "Open NAMAE client"
-APP_VERSION = "24.06-1"
+APP_VERSION = "24.07-1"
 
 
 class ddns_client:
@@ -57,12 +57,12 @@ class ddns_client:
         }
         
         try:
-           with open(self.log_file_path, "w", encoding="utf-8") as log_fp:
+            with open(self.log_file_path, "w", encoding="utf-8") as log_fp:
                 json.dump(log_data, log_fp, ensure_ascii=False, indent=4)
         except:
             return False
         
-        if os.stat(self.log_file_path).st_uid == os.geteuid():
+        if os.name == "posix" and os.stat(self.log_file_path).st_uid == os.geteuid():
             os.chmod(self.log_file_path, 0o766)
         
         return True
